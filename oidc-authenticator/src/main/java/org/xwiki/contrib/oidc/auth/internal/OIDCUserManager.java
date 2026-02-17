@@ -739,18 +739,26 @@ public class OIDCUserManager
     {
         this.logger.debug("Checking if group name {} matches inclusion {} and exclusion {}", groupName, includePattern,
             excludePattern);
+
         if (includePattern != null && !includePattern.matcher(groupName).matches()) {
-            this.logger.debug("Match faiure: group name {} doesn't match the inclusion regex {}", includePattern);
+            this.logger.debug("    Match faiure: group name {} doesn't match the inclusion regex {}", groupName,
+                includePattern);
+
             return false;
         }
+
         // either matches the inclusion or there is no inclusion, check the exclusion
         if (excludePattern != null && excludePattern.matcher(groupName).matches()) {
-            this.logger.debug("Match faiure: group name {} matches the exclusion regex {}", excludePattern);
+            this.logger.debug("    Match faiure: group name {} matches the exclusion regex {}", groupName,
+                excludePattern);
+
             return false;
         }
+
         // either matches both or there is no inclusion or exclusion mentioned
-        this.logger.debug("Match success: group name {} passes both inclusion and exclusion, or none is specified",
+        this.logger.debug("    Match success: group name {} passes both inclusion and exclusion, or none is specified",
             groupName);
+
         return true;
     }
 

@@ -588,6 +588,8 @@ public class OIDCClientConfiguration extends OIDCConfiguration
     @Override
     protected <T> T getProperty(String key, T def)
     {
+        this.logger.debug("Getting property [{}]", key);
+
         if (SAFE_PROPERTIES.contains(key)) {
             // Get property from request
             String requestValue = getRequestParameter(key);
@@ -599,6 +601,8 @@ public class OIDCClientConfiguration extends OIDCConfiguration
         // Get property from session
         T sessionValue = getSessionAttribute(key);
         if (sessionValue != null) {
+            this.logger.debug("  -> session value: [{}]", sessionValue);
+
             return sessionValue;
         }
 
@@ -609,12 +613,18 @@ public class OIDCClientConfiguration extends OIDCConfiguration
             T wikiValue =
                 getWikiConfigurationAttribute(wikiClientConfiguration, key, def != null ? def.getClass() : null);
             if (wikiValue != null) {
+                this.logger.debug("  -> wiki value: [{}]", wikiValue);
+
                 return wikiValue;
             }
         }
 
         // Get property from configuration
-        return this.configuration.getProperty(key, def);
+        T value = this.configuration.getProperty(key, def);
+
+        this.logger.debug("  -> xwiki.properties value: [{}]", value);
+
+        return value;
     }
 
     /**
@@ -1543,7 +1553,7 @@ public class OIDCClientConfiguration extends OIDCConfiguration
     {
         String configName = getOIDCProviderName();
 
-        this.logger.debug("Wiki configuration name is [{}]", configName);
+        this.logger.debug("    Wiki configuration name is [{}]", configName);
 
         try {
             return oidcClientConfigurationStore.getOIDCClientConfiguration(configName);

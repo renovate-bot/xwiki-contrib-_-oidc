@@ -341,16 +341,13 @@ public class OIDCUserManager
         XWikiDocument userDocument = this.store.searchDocument(idToken.getIssuer().getValue(), formattedSubject);
 
         XWikiDocument modifiableDocument;
-        boolean newUser;
         if (userDocument == null) {
             userDocument = getNewUserDocument(substitutor);
 
-            newUser = true;
             modifiableDocument = userDocument;
         } else {
-            // Don't change the document author to not change document execution right
-
-            newUser = false;
+            // Do modification through another XWikiDocument to make sure to only modify real data and not plumbing
+            // metadata (like author), to avoid impacting the rights of the document
             modifiableDocument = userDocument.clone();
         }
 
@@ -457,23 +454,27 @@ public class OIDCUserManager
 
         boolean userUpdated = false;
 
-        // Apply the modifications
-        if (newUser || userDocument.apply(modifiableDocument)) {
-            String comment;
-            if (newUser) {
-                comment = "Create user from OpenID Connect";
-            } else {
-                comment = "Update user from OpenID Connect";
-            }
-
-            xcontext.getWiki().saveDocument(userDocument, comment, xcontext);
-
-            // Now let's add the new user to XWiki.XWikiAllGroup
-            if (newUser) {
-                xcontext.getWiki().setUserDefaultGroup(userDocument.getFullName(), xcontext);
-            }
-
+        // Save
+        if (userDocument.isNew()) {
             userUpdated = true;
+
+            // Save the new document
+            xcontext.getWiki().saveDocument(userDocument, "Create user from OpenID Connect", xcontext);
+
+            // Now let's add the new user to default groups (usually, XWiki.XWikiAllGroup)
+            xcontext.getWiki().setUserDefaultGroup(userDocument.getFullName(), xcontext);
+        } else {
+            // Avoid modifying the document coming from the cache
+            userDocument = userDocument.clone();
+
+            // Use apply to only modify real data and not plumbing metadata (like author), to avoid impacting the rights
+            // of the document
+            if (userDocument.apply(modifiableDocument)) {
+                userUpdated = true;
+
+                // Save the modifications
+                xcontext.getWiki().saveDocument(userDocument, "Update user from OpenID Connect", xcontext);
+            }
         }
 
         // Sync user groups with the provider

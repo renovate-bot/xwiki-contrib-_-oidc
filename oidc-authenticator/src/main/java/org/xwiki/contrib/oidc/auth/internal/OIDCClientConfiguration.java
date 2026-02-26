@@ -414,7 +414,7 @@ public class OIDCClientConfiguration extends OIDCConfiguration
 
     /**
      * Support for PKCE
-     * @since 2.30.0
+     * @since 2.20.0
      */
     public static final String PROP_SESSION_CODE_VERIFIER = "oidc.codeverifier";
 
@@ -950,7 +950,7 @@ public class OIDCClientConfiguration extends OIDCConfiguration
 
     /**
      * PKCE support
-     * @since 2.30.0
+     * @since 2.20.0
      */
     public CodeVerifier getSessionCodeVerifier()
     {
@@ -959,7 +959,7 @@ public class OIDCClientConfiguration extends OIDCConfiguration
     }
 
     /**
-     * @since 2.30.0
+     * @since 2.20.0
      */
     public void setSessionCodeVerifier(CodeVerifier codeVerifier)
     {

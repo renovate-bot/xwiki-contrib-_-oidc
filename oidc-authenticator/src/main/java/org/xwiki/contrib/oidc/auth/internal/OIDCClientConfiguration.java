@@ -958,11 +958,13 @@ public class OIDCClientConfiguration extends OIDCConfiguration
         return secret != null ? new CodeVerifier(secret) : null;
     }
 
+    /**
+     * @since 2.30.0
+     */
     public void setSessionCodeVerifier(CodeVerifier codeVerifier)
     {
         setSessionAttribute(PROP_SESSION_CODE_VERIFIER, codeVerifier.getValue());
     }
-
 
     public void setSessionState(String state)
     {

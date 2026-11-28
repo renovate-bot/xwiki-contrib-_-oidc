@@ -61,7 +61,7 @@
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>
-        <version>10.10</version>
+        <version>10.11</version>
       </dependency>
       <!-- Make sure commons-lang is not used in the extension code: the test scope keeps it available for the tests
            (e.g. it's needed to execute Velocity templates in page tests) -->
